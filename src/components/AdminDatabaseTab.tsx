@@ -591,9 +591,51 @@ git push -u origin main`;
                 </div>
               </div>
 
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold shrink-0">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Workflow GitHub Actions Siap Pakai</span>
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href="/dist.zip"
+                  download="dist.zip"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition shadow-xs cursor-pointer"
+                  title="Unduh file siap pakai untuk atasi layar blank"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Unduh dist.zip (Atasi Layar Blank)</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Solusi Cepat Layar Blank Putih Banner */}
+            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300/80 text-amber-950 space-y-2.5">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div className="space-y-1 flex-1">
+                  <h4 className="font-extrabold text-xs text-amber-900 uppercase tracking-wide">
+                    ⚠️ Mengapa Muncul Layar Blank Putih di Hostinger Setelah Sinkronisasi?
+                  </h4>
+                  <p className="text-xs text-amber-900/90 leading-relaxed">
+                    <strong>Penyebabnya:</strong> Fitur Git Hostinger kemarin menarik kode dari branch <code>main</code> (berisi file mentah <code>.tsx</code>). Karena Hostinger adalah web server biasa, browser tidak bisa membaca file <code>.tsx</code> dan langsung menampilkan layar putih kosong.
+                  </p>
+                  <div className="pt-1.5 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <div className="p-3 rounded-xl bg-white/90 border border-amber-200 space-y-1">
+                      <span className="font-bold text-amber-950 block">💡 Solusi 1 Menit (Paling Ampuh &amp; Pasti Berhasil):</span>
+                      <ol className="list-decimal list-inside text-[11px] text-slate-700 space-y-1">
+                        <li>Klik tombol kuning <strong>Unduh dist.zip</strong> di atas.</li>
+                        <li>Buka <strong>Hostinger File Manager &gt; public_html</strong>. Hapus isi lama.</li>
+                        <li>Upload <strong>dist.zip</strong> ke <code>public_html</code> lalu klik kanan <strong>Extract</strong>.</li>
+                        <li>Refresh website ➔ <strong>Website langsung tampil 100%!</strong></li>
+                      </ol>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-white/90 border border-amber-200 space-y-1">
+                      <span className="font-bold text-amber-950 block">💡 Jika Tetap Mau Pakai Menu GIT Hostinger:</span>
+                      <ol className="list-decimal list-inside text-xs text-slate-700 space-y-1">
+                        <li>Di Hostinger menu <strong>Git</strong>, hapus repositori yang lama.</li>
+                        <li>Koneksikan ulang, tetapi di kolom <strong>Branch</strong> ketik: <code className="font-bold text-emerald-800 bg-emerald-100 px-1 py-0.5 rounded">production</code> <em>(Jangan pilih main!)</em>.</li>
+                        <li>Branch <code>production</code> sudah otomatis berisi file hasil build yang siap tampil.</li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
