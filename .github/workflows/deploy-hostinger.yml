@@ -1,0 +1,50 @@
+name: Deploy ke Hostinger (Git Production & FTP)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Checkout Kode Repositori
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 3. Install Dependencies
+        run: npm ci
+
+      - name: 4. Build Proyek Produksi
+        run: npm run package:hostinger
+
+      - name: 5. Terbitkan ke Branch production (Untuk Menu GIT Hostinger)
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: production
+          folder: dist
+          clean: true
+
+      - name: 6. Deploy Otomatis via FTP (Jika Secret FTP Terisi)
+        if: ${{ env.FTP_SERVER != '' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ./public_html/
+          dangerous-clean-slate: false
