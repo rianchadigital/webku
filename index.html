@@ -13,9 +13,28 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <!-- Bundle CSS Produksi untuk Hostinger / Shared Hosting -->
+    <link rel="stylesheet" crossorigin href="/assets/app.css" onerror="this.remove()">
   </head>
   <body class="font-sans antialiased bg-slate-50 text-slate-800">
     <div id="root"></div>
+
+    <!-- Pelindung Layar Blank Putih Hostinger (Auto Fallback ke bundle produksi) -->
+    <script>
+      window.addEventListener('error', function(e) {
+        if (e.target && (e.target.src || '').indexOf('main.tsx') !== -1) {
+          if (!document.getElementById('fallback-bundle-script')) {
+            var s = document.createElement('script');
+            s.id = 'fallback-bundle-script';
+            s.type = 'module';
+            s.crossOrigin = 'anonymous';
+            s.src = '/assets/app.js';
+            document.body.appendChild(s);
+          }
+        }
+      }, true);
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

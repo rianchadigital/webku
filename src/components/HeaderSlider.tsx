@@ -50,7 +50,7 @@ export const HeaderSlider: React.FC = () => {
     {
       id: 'spanduk-1',
       bannerNumber: 1,
-      image: '/banners/banner-1.png',
+      image: '/banners/banner-1.jpg',
       title: 'Puskesmas',
       highlight: 'Kepulauan Seribu Selatan',
       subtitle: 'Kesehatan Anda Tujuan Kami, Kebahagiaan Anda Kepuasan Kami',
@@ -66,7 +66,7 @@ export const HeaderSlider: React.FC = () => {
     {
       id: 'spanduk-2',
       bannerNumber: 2,
-      image: '/banners/banner-2.png',
+      image: '/banners/banner-2.jpg',
       title: 'Transformasi',
       highlight: 'Integrasi Layanan Primer (ILP)',
       subtitle: 'Pelayanan Kesehatan Siklus Hidup Holistik 5 Klaster Kemenkes RI',
@@ -82,7 +82,7 @@ export const HeaderSlider: React.FC = () => {
     {
       id: 'spanduk-3',
       bannerNumber: 3,
-      image: '/banners/banner-3.png',
+      image: '/banners/banner-3.jpg',
       title: 'Kesiapsiagaan Maritim &',
       highlight: 'Layanan Rujukan Darurat 24 Jam',
       subtitle: 'Sistem Rujukan Medis Bebas Biaya Antar Pulau (SISRUTE)',

@@ -1,6 +1,6 @@
 # ==============================================================================
 # KONFIGURASI APACHE .HTACCESS UNTUK HOSTINGER & CPANEL
-# Puskesmas Kepulauan Seribu Selatan (React SPA Single Page App)
+# Puskesmas Kepulauan Seribu Selatan
 # ==============================================================================
 
 <IfModule mod_rewrite.c>
@@ -11,12 +11,24 @@
   RewriteCond %{HTTPS} off
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-  # 2. Routing Single Page Application (SPA)
-  # Jika file atau direktori fisik tidak ada, alihkan semua request ke index.html
+  # 2. ANTISIPASI LAYAR BLANK PUTIH JIKA DITARIK DARI GIT REPOSITORI:
+  # Jika file yang diminta adalah /src/main.tsx atau /src/main.jsx,
+  # alihkan langsung ke bundle produksi /assets/app.js!
+  RewriteRule ^src/main\.(tsx|jsx|js|ts)$ /assets/app.js [L]
+  RewriteRule ^src/index\.css$ /assets/app.css [L]
+
+  # 3. Routing Single Page Application (SPA)
+  # Jangan redirect file fisik yang ada (seperti file api/, assets/, banners/, .php, .js, .css)
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
+</IfModule>
+
+# MIME Types yang tepat agar browser mengeksekusi modul javascript
+<IfModule mod_mime.c>
+  AddType application/javascript .js .mjs
+  AddType text/css .css
 </IfModule>
 
 # ==============================================================================

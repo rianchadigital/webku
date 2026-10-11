@@ -26,6 +26,16 @@ Cukup ikuti **4 Tahap Singkat** berikut:
 
 ---
 
+## 💡 PERTANYAAN UMUM: "MENGAPA KEMARIN SEMPAT BLANK PUTIH DI HOSTINGER?"
+
+Jika kemarin Anda sempat melihat layar putih kosong (blank):
+- **Penyebabnya:** Hostinger adalah web hosting biasa yang tidak memiliki compiler Node.js/Vite. Jika Anda memilih branch `main`, Hostinger menarik kode mentah `.tsx` yang tidak bisa dibaca oleh browser.
+- **Solusi yang Sudah Kami Terapkan:**
+  1. **Solusi 1 (Paling Cepat & Pasti Berhasil 100%):** Unduh file **`dist.zip`** (hanya 1.4 MB) melalui panel admin website. Buka **Hostinger File Manager > public_html**, hapus file lama, upload `dist.zip` lalu klik kanan **Extract**. Refresh website ➔ Langsung tampil sempurna!
+  2. **Solusi 2 (Jika Menggunakan Menu Git Hostinger):** Di formulir Git Hostinger, pada kolom **Branch**, pilih/ketik **`production`** *(bukan `main`)*. Repositori kami sekarang juga sudah dilengkapi proteksi `.htaccess` dan bundle produksi di branch `main` sehingga tidak akan blank putih lagi.
+
+---
+
 ## 🚀 TAHAP 2: DI HOSTINGER, KLIK MENU "GIT" LALU KONEKSIKAN (WEBSITE LANGSUNG TAMPIL!)
 
 Di Hostinger hPanel, terdapat fitur bawaan bernama **Git**. Cara menghubungkannya sangat mudah:
