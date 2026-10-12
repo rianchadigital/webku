@@ -99,6 +99,16 @@ export const databaseTablesInfo = [
     columns: ['id', 'nomor_tiket', 'nama_pelapor', 'kontak_hp', 'pulau', 'kategori', 'isi_laporan', 'status', 'tanggapan']
   },
   {
+    name: 'tautan_bermanfaat',
+    description: 'Tautan bermanfaat portal eksternal dan internal (e-TPP, SIMPEG BKD, DARLINK, SISDMK Kemenkes).',
+    columns: ['id', 'name', 'short_name', 'subtitle', 'description', 'url', 'badge', 'badge_color', 'category', 'icon_name']
+  },
+  {
+    name: 'pengumuman',
+    description: 'Informasi pengumuman penting, lowongan rekrutmen nakes, dan banner peringatan darurat.',
+    columns: ['id', 'title', 'category', 'urgency', 'date', 'valid_until', 'official_number', 'author', 'summary', 'content', 'is_urgent_banner']
+  },
+  {
     name: 'faq_kesehatan',
     description: 'Tanya jawab umum seputar faskes, rujukan medis terpadu, dan persyaratan BPJS.',
     columns: ['id', 'kategori', 'pertanyaan', 'jawaban']

@@ -235,6 +235,66 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   });
 
+  // Muat data dari Database MySQL Hostinger saat aplikasi pertama kali dibuka
+  useEffect(() => {
+    // 1. Muat Tautan Bermanfaat dari MySQL
+    fetch('/api/tautan.php')
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+          setUsefulLinks(json.data);
+        }
+      })
+      .catch(() => {
+        // Fallback hening jika server/db lokal
+      });
+
+    // 2. Muat Pengumuman & Rekrutmen dari MySQL
+    fetch('/api/pengumuman.php')
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+          setAnnouncements(json.data);
+        }
+      })
+      .catch(() => {});
+
+    // 3. Muat Profil Puskesmas & Deteksi Foto dr. Dendy dari folder GitHub asset/gambar/
+    fetch('/api/profile.php')
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === 'success' && json.data) {
+          setProfile(prev => ({
+            ...prev,
+            ...(json.data.headOfPuskesmas ? { headOfPuskesmas: json.data.headOfPuskesmas, headOfPuskesmasName: json.data.headOfPuskesmas } : {}),
+            ...(json.data.headOfPuskesmasPhoto ? { headOfPuskesmasPhoto: json.data.headOfPuskesmasPhoto } : {}),
+            detectedPhotoFromAsset: json.data.detectedPhotoFromAsset || json.data.photo_url || prev.detectedPhotoFromAsset
+          }));
+        }
+      })
+      .catch(() => {});
+
+    // 4. Muat Berita dari MySQL
+    fetch('/api/berita.php')
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+          setNews(json.data);
+        }
+      })
+      .catch(() => {});
+
+    // 5. Muat Agenda dari MySQL
+    fetch('/api/agenda.php')
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+          setAgenda(json.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const setIsAdminAuthenticated = (auth: boolean) => {
     setIsAdminAuthenticatedState(auth);
     try {
@@ -296,6 +356,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Updater actions for Admin Dashboard
   const updateProfile = (partial: Partial<PuskesmasProfile>) => {
     setProfile(prev => ({ ...prev, ...partial }));
+    fetch('/api/profile.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(partial)
+    }).catch(e => console.warn('Gagal sinkron profil ke MySQL:', e));
   };
 
   const updateHealthServices = (services: HealthService[]) => {
@@ -332,14 +397,27 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const addUsefulLink = (link: UsefulLink) => {
     setUsefulLinks(prev => [link, ...prev]);
+    fetch('/api/tautan.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(link)
+    }).catch(e => console.warn('Gagal simpan tautan ke MySQL:', e));
   };
 
   const updateUsefulLink = (id: string, partial: Partial<UsefulLink>) => {
     setUsefulLinks(prev => prev.map(l => l.id === id ? { ...l, ...partial } : l));
+    fetch('/api/tautan.php', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, ...partial })
+    }).catch(e => console.warn('Gagal update tautan ke MySQL:', e));
   };
 
   const deleteUsefulLink = (id: string) => {
     setUsefulLinks(prev => prev.filter(l => l.id !== id));
+    fetch(`/api/tautan.php?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE'
+    }).catch(e => console.warn('Gagal hapus tautan dari MySQL:', e));
   };
 
   const updateUsefulLinks = (links: UsefulLink[]) => {
@@ -349,14 +427,27 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Announcements Handlers
   const addAnnouncement = (item: AnnouncementItem) => {
     setAnnouncements(prev => [item, ...prev]);
+    fetch('/api/pengumuman.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item)
+    }).catch(e => console.warn('Gagal simpan pengumuman ke MySQL:', e));
   };
 
   const updateAnnouncement = (id: string, partial: Partial<AnnouncementItem>) => {
     setAnnouncements(prev => prev.map(a => a.id === id ? { ...a, ...partial } : a));
+    fetch('/api/pengumuman.php', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, ...partial })
+    }).catch(e => console.warn('Gagal update pengumuman ke MySQL:', e));
   };
 
   const deleteAnnouncement = (id: string) => {
     setAnnouncements(prev => prev.filter(a => a.id !== id));
+    fetch(`/api/pengumuman.php?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE'
+    }).catch(e => console.warn('Gagal hapus pengumuman dari MySQL:', e));
   };
 
   const updateAnnouncements = (items: AnnouncementItem[]) => {

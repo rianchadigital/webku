@@ -168,6 +168,10 @@ export const AdminUsefulLinksTab: React.FC<AdminUsefulLinksTabProps> = ({ onSucc
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Tambah, perbarui, atau hapus daftar link bermanfaat eksternal (e-TPP, SIMPEG, DARLINK, SISDMK, dll.) yang tampil di beranda website.
           </p>
+          <div className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-300 font-semibold">
+            <Database className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Terhubung ke Database MySQL Hostinger (Tabel: <code>tautan_bermanfaat</code>)</span>
+          </div>
         </div>
 
         <button

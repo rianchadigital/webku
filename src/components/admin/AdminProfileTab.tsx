@@ -261,9 +261,43 @@ export const AdminProfileTab: React.FC<Props> = ({ onSuccessToast }) => {
                         updateProfile({ headOfPuskesmasPhoto: e.target.value });
                         localStorage.setItem('puskesmas_head_photo', e.target.value);
                       }}
-                      placeholder="https://... atau /kepala-puskesmas.svg"
+                      placeholder="https://... atau /asset/gambar/dendy.jpg"
                       className="flex-1 p-2 rounded-xl bg-white border border-slate-200 font-mono text-[11px] focus:border-sky-500 outline-none"
                     />
+                  </div>
+
+                  {/* GitHub Asset Quick Connectors */}
+                  <div className="p-2.5 rounded-xl bg-sky-50/80 border border-sky-100 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                    <div className="flex items-center gap-1.5 text-sky-900 font-medium">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span>Koneksi Foto GitHub: <strong>asset/gambar/dendy.*</strong></span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const url = '/asset/gambar/dendy.jpg';
+                          updateProfile({ headOfPuskesmasPhoto: url });
+                          localStorage.setItem('puskesmas_head_photo', url);
+                          onSuccessToast('Foto Kepala diatur ke: /asset/gambar/dendy.jpg');
+                        }}
+                        className="px-2 py-1 rounded bg-white border border-sky-200 text-sky-700 hover:bg-sky-100 font-semibold"
+                      >
+                        Pilih asset/gambar/dendy.jpg
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const url = '/asset/gambar/dendy.png';
+                          updateProfile({ headOfPuskesmasPhoto: url });
+                          localStorage.setItem('puskesmas_head_photo', url);
+                          onSuccessToast('Foto Kepala diatur ke: /asset/gambar/dendy.png');
+                        }}
+                        className="px-2 py-1 rounded bg-white border border-sky-200 text-sky-700 hover:bg-sky-100 font-semibold"
+                      >
+                        Pilih asset/gambar/dendy.png
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -273,6 +273,7 @@ export interface PuskesmasProfile {
   headOfPuskesmasTitle: string;
   headOfPuskesmasNip: string;
   headOfPuskesmasPhoto: string;
+  detectedPhotoFromAsset?: string;
   welcomeSpeech: string;
   welcomeSpeechHighlights: string[];
   about?: string;

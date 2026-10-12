@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useData } from '../context/DataContext';
 import { 
   Building2, 
@@ -15,7 +15,66 @@ import {
 
 export const WelcomeSection: React.FC = () => {
   const { profile, navigateToTab } = useData();
-  const photoUrl = profile.headOfPuskesmasPhoto || localStorage.getItem('puskesmas_head_photo') || '/kepala-puskesmas.svg';
+
+  // Daftar prioritas deteksi foto Kepala Puskesmas (dr. Dendy) dari folder GitHub asset/gambar/ atau asset/
+  const candidatePhotos = useMemo(() => {
+    const list = [
+      profile.detectedPhotoFromAsset,
+      // File yang diunggah pengguna ke folder asset/gambar/ di GitHub:
+      '/asset/gambar/dendy.jpg',
+      '/asset/gambar/dendy.png',
+      '/asset/gambar/dendy.jpeg',
+      '/asset/gambar/dendy.webp',
+      '/asset/gambar/dr-dendy.jpg',
+      '/asset/gambar/dr-dendy.png',
+      '/asset/gambar/dr_dendy.jpg',
+      '/asset/gambar/foto-dendy.jpg',
+      '/asset/gambar/dendy_purnama.jpg',
+      '/asset/gambar/dendy.svg',
+      // Folder asset/ langsung di GitHub:
+      '/asset/dendy.jpg',
+      '/asset/dendy.png',
+      '/asset/dendy.jpeg',
+      '/asset/dendy.webp',
+      '/asset/dr-dendy.jpg',
+      '/asset/foto-dendy.jpg',
+      '/asset/gambar/kepala-puskesmas.jpg',
+      '/asset/gambar/kepala-puskesmas.png',
+      // Foto dari Admin atau localStorage:
+      profile.headOfPuskesmasPhoto,
+      localStorage.getItem('puskesmas_head_photo'),
+      // Fallback SVG:
+      '/assets/images/kepala-puskesmas.svg',
+      '/assets/kepala-puskesmas.svg',
+      '/kepala-puskesmas.svg'
+    ];
+    return Array.from(new Set(list.filter((u): u is string => Boolean(u && typeof u === 'string' && u.trim()))));
+  }, [profile.detectedPhotoFromAsset, profile.headOfPuskesmasPhoto]);
+
+  const [currentCandidateIndex, setCurrentCandidateIndex] = useState(0);
+
+  // Deteksi otomatis jika server PHP mengidentifikasi nama file spesifik
+  useEffect(() => {
+    fetch('/api/profile.php?action=detect_head_photo')
+      .then(res => res.json())
+      .then(json => {
+        if (json.status === 'success' && json.data?.photo_url) {
+          const foundIdx = candidatePhotos.indexOf(json.data.photo_url);
+          if (foundIdx !== -1) {
+            setCurrentCandidateIndex(foundIdx);
+          }
+        }
+      })
+      .catch(() => {});
+  }, [candidatePhotos]);
+
+  const activePhotoUrl = candidatePhotos[currentCandidateIndex] || '/kepala-puskesmas.svg';
+
+  const handlePhotoError = () => {
+    if (currentCandidateIndex + 1 < candidatePhotos.length) {
+      setCurrentCandidateIndex(prev => prev + 1);
+    }
+  };
 
   return (
     <section id="sambutan-section" className="py-12 sm:py-16 bg-gradient-to-b from-slate-50 via-white to-sky-50/40">
@@ -70,13 +129,11 @@ export const WelcomeSection: React.FC = () => {
                 {/* 3x4 Photo Frame with Green Studio Background */}
                 <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden border-2 border-amber-300/80 shadow-lg group bg-emerald-800">
                   <img
-                    src={photoUrl}
+                    src={activePhotoUrl}
                     alt="dr. Ignatius Dendy Purnama - Kepala Puskesmas Kepulauan Seribu Selatan"
                     className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
                     referrerPolicy="no-referrer"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = '/kepala-puskesmas.svg';
-                    }}
+                    onError={handlePhotoError}
                   />
 
                   {/* Corner Ribbon / Official Emblem */}

@@ -40,6 +40,13 @@ def main():
         os.makedirs(dist_asset, exist_ok=True)
         shutil.copytree(asset_src, dist_asset, dirs_exist_ok=True)
 
+    # 3b. Copy database to dist/database
+    db_src = os.path.join(root, 'database')
+    dist_db = os.path.join(dist_dir, 'database')
+    if os.path.exists(db_src):
+        os.makedirs(dist_db, exist_ok=True)
+        shutil.copytree(db_src, dist_db, dirs_exist_ok=True)
+
     # 4. Copy .htaccess to dist/.htaccess and public/.htaccess
     htaccess_src = os.path.join(root, '.htaccess')
     if os.path.exists(htaccess_src):

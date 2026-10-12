@@ -21,7 +21,8 @@ import {
   Paperclip,
   Phone,
   Mail,
-  UserCheck
+  UserCheck,
+  Database
 } from 'lucide-react';
 
 interface AdminAnnouncementsTabProps {
@@ -245,6 +246,10 @@ export const AdminAnnouncementsTab: React.FC<AdminAnnouncementsTabProps> = ({ on
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Publikasikan pengumuman lowongan kerja nakes / PJLP, peringatan dini cuaca laut BMKG, dan maklumat pelayanan.
           </p>
+          <div className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-300 font-semibold">
+            <Database className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Terhubung ke Database MySQL Hostinger (Tabel: <code>pengumuman</code>)</span>
+          </div>
         </div>
 
         <button
