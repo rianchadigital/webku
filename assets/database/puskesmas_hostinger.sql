@@ -253,6 +253,101 @@ INSERT INTO `dokumen_publik` (`id`, `nama`, `kategori`, `tanggal`, `ukuran_berka
 ('doc-struktur-pergub14', 'Dokumen Bagan Struktur Organisasi Pergub DKI No. 14 Puskesmas Kepulauan Seribu Selatan', 'Informasi pelayanan', '2026-08-15', '540 KB', 'PDF / Drive', 'https://drive.google.com/file/d/1IMRc04HIo3QhOGZXbRHUlQ-P1dRGusZN/view?usp=sharing', 2240, 'Bagan dan tata kerja struktur organisasi Puskesmas Kepulauan Seribu Selatan berdasarkan Peraturan Gubernur Provinsi DKI Jakarta Nomor 14.'),
 ('doc-struktur-ilp', 'Dokumen Struktur Organisasi Integrasi Layanan Primer (ILP) 2026', 'Tata kelola', '2026-08-15', '510 KB', 'PDF / Drive', 'https://drive.google.com/file/d/1hNK4UL5swEImzx3mmknDWFIUWb_Kgc0W/view?usp=sharing', 1980, 'SK Tim Kerja 5 Klaster Integrasi Layanan Primer (ILP) berdasarkan Kepmenkes RI No. 2014/2023.');
 
+-- ------------------------------------------------------------------------------
+-- 8. TABEL TAUTAN BERMANFAAT (tautan_bermanfaat)
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `tautan_bermanfaat`;
+CREATE TABLE `tautan_bermanfaat` (
+  `id` VARCHAR(50) NOT NULL,
+  `name` VARCHAR(150) NOT NULL,
+  `short_name` VARCHAR(50) DEFAULT NULL,
+  `subtitle` VARCHAR(255) DEFAULT NULL,
+  `description` TEXT DEFAULT NULL,
+  `url` VARCHAR(255) NOT NULL,
+  `badge` VARCHAR(50) DEFAULT 'Resmi',
+  `badge_color` VARCHAR(100) DEFAULT NULL,
+  `category` VARCHAR(100) DEFAULT 'Kepegawaian & Kinerja',
+  `icon_name` VARCHAR(50) DEFAULT 'globe',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `tautan_bermanfaat` (`id`, `name`, `short_name`, `subtitle`, `description`, `url`, `badge`, `badge_color`, `category`, `icon_name`) VALUES
+('link-etpp', 'e-TPP DKI Jakarta', 'e-TPP', 'Tambahan Penghasilan Pegawai', 'Sistem pelaporan kinerja, kehadiran harian & realisasi pembayaran tunjangan ASN Pemprov DKI Jakarta.', 'https://etpp.jakarta.go.id/login', 'Pemprov DKI Jakarta', 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800', 'Kepegawaian & Kinerja', 'file'),
+('link-simpeg', 'SIMPEG DKI Jakarta', 'SIMPEG', 'Sistem Manajemen Kepegawaian', 'Portal terpadu layanan administrasi berkas ASN, profil jabatan, SK, dan mutasi Badan Kepegawaian Daerah.', 'https://pegawai.jakarta.go.id/login', 'BKD DKI Jakarta', 'bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800', 'Administrasi ASN', 'user'),
+('link-darlink', 'DARLINK Seribu Selatan', 'DARLINK', 'Data Arsip & Rekam Layanan Interaktif', 'Sistem operasional terpadu internal faskes untuk monitoring arsip, rekam data, dan layanan kepulauan.', 'https://darlink.puskesmasseribuselatan.com', 'Internal Puskesmas', 'bg-teal-50 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800', 'Sistem Manajemen Faskes', 'database'),
+('link-sisdmk', 'SISDMK Kemenkes RI', 'SISDMK', 'Sistem Informasi SDM Kesehatan', 'Basis data nasional tenaga medis, dokter, bidan, perawat, verifikasi STR, dan perencanaan nakes Kemenkes.', 'https://sisdmk.kemkes.go.id/login', 'Kementerian Kesehatan RI', 'bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800', 'SDM Kesehatan Nasional', 'shield');
+
+-- ------------------------------------------------------------------------------
+-- 9. TABEL PENGUMUMAN & REKRUTMEN (pengumuman)
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `pengumuman`;
+CREATE TABLE `pengumuman` (
+  `id` VARCHAR(50) NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `category` VARCHAR(100) NOT NULL DEFAULT 'Pengumuman Resmi',
+  `urgency` VARCHAR(50) NOT NULL DEFAULT 'Biasa',
+  `date` VARCHAR(50) NOT NULL,
+  `valid_until` VARCHAR(50) DEFAULT NULL,
+  `official_number` VARCHAR(100) NOT NULL DEFAULT 'PKM.KSS/OFFICIAL/2026',
+  `author` VARCHAR(150) NOT NULL DEFAULT 'Puskesmas Kepulauan Seribu Selatan',
+  `summary` TEXT DEFAULT NULL,
+  `content` LONGTEXT NOT NULL,
+  `positions_json` JSON DEFAULT NULL,
+  `requirements_json` JSON DEFAULT NULL,
+  `documents_json` JSON DEFAULT NULL,
+  `contact_person_json` JSON DEFAULT NULL,
+  `file_attachment_json` JSON DEFAULT NULL,
+  `is_urgent_banner` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `pengumuman` 
+(`id`, `title`, `category`, `urgency`, `date`, `valid_until`, `official_number`, `author`, `summary`, `content`, `positions_json`, `requirements_json`, `documents_json`, `contact_person_json`, `file_attachment_json`, `is_urgent_banner`)
+VALUES 
+('ann-1', 'Penerimaan Tenaga Kesehatan Non-PNS / PJLP Puskesmas Kepulauan Seribu Selatan Formasi Tahun 2026', 'Rekrutmen', 'Tinggi', '05 Oktober 2026', '28 Oktober 2026', '800/042/PKM.KSS/X/2026', 'Sub Bagian Tata Usaha & Tim Seleksi Rekrutmen', 'Puskesmas Kepulauan Seribu Selatan membuka kesempatan berkarir bagi putra-putri terbaik bangsa untuk bergabung sebagai tenaga kesehatan dan penunjang medis kepulauan.', 'Dalam rangka penguatan Integrasi Layanan Primer (ILP) dan pemenuhan standar ketenagaan di Puskesmas Induk Pulau Tidung serta Jejaring Pustu Pulau Lancang, Pulau Pari, dan Pulau Untung Jawa, Puskesmas Kepulauan Seribu Selatan membuka seleksi penerimaan tenaga kontrak dengan dedikasi tinggi mengabdi di wilayah kepulauan bahari.', '[{"name":"Perawat Pelaksana / Terampil","quota":"3 Orang","qualification":"D-III / S-1 Ners Keperawatan, STR Aktif, Bersedia dinas rawat inap 24 jam"},{"name":"Bidan Pelaksana","quota":"2 Orang","qualification":"D-III / D-IV Kebidanan, STR Aktif, Kompeten dalam penanganan kegawatdaruratan maternal neonatal"},{"name":"Pranata Laboratorium Kesehatan (ATLM)","quota":"1 Orang","qualification":"D-III Analis Kesehatan / Laboratorium Medis, STR Aktif, Mampu operasional hematologi analizer & mikroskopis"},{"name":"Tenaga Sanitasi Lingkungan (Kesling)","quota":"1 Orang","qualification":"D-III / S-1 Kesehatan Lingkungan / Sanitasi, Memahami pengelolaan limbah B3 medis & pengawasan air bersih"}]', '["Warga Negara Indonesia (WNI) berusia minimal 20 tahun dan maksimal 35 tahun pada saat pendaftaran.","Memiliki kualifikasi pendidikan sesuai dengan formasi yang dilamar dari institusi terakreditasi minimal B.","Memiliki Surat Tanda Registrasi (STR) yang masih berlaku (minimal 6 bulan masa aktif) yang diterbitkan Kemenkes RI / KTKI.","Sehat jasmani dan rohani, tidak memiliki riwayat mabuk laut berat, serta bersedia ditempatkan di pulau pemukiman.","Memiliki sertifikat pelatihan keahlian (BTCLS bagi perawat, APN/MU bagi bidan) merupakan nilai tambah.","Berkelakuan baik dan tidak pernah diberhentikan dengan tidak hormat dari instansi pemerintah/swasta."]', '["Surat Lamaran Pekerjaan ditujukan kepada Kepala Puskesmas Kepulauan Seribu Selatan.","Curriculum Vitae (CV) lengkap dengan riwayat pengalaman kerja / magang.","Salinan Ijazah dan Transkrip Nilai yang telah dilegalisir.","Salinan STR yang masih berlaku.","Salinan KTP elektronik dan Kartu Keluarga (KK).","Surat Keterangan Sehat dari fasilitas pelayanan kesehatan pemerintah.","Pasfoto terbaru ukuran 4x6 latar belakang warna merah (format JPG/PDF)."]', '{"name":"Panitia Seleksi Pegawai Puskesmas Kepulauan Seribu Selatan","phone":"0813-1818-7299","email":"rekrutmen.puskesmas1000@jakarta.go.id"}', '{"name":"Pengumuman_Rekrutmen_Nakes_PKM_KSS_2026.pdf","size":"2.4 MB"}', 0);
+
+-- ------------------------------------------------------------------------------
+-- 10. TABEL BERITA KEGIATAN (berita_kegiatan)
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `berita_kegiatan`;
+CREATE TABLE `berita_kegiatan` (
+  `id` VARCHAR(50) NOT NULL,
+  `judul` VARCHAR(255) NOT NULL,
+  `kategori` VARCHAR(100) NOT NULL DEFAULT 'Kesehatan Masyarakat',
+  `ringkasan` TEXT DEFAULT NULL,
+  `konten` LONGTEXT NOT NULL,
+  `penulis` VARCHAR(150) NOT NULL DEFAULT 'Tim Redaksi Puskesmas',
+  `tanggal` VARCHAR(50) NOT NULL,
+  `foto_url` VARCHAR(255) DEFAULT NULL,
+  `dibaca` INT(11) NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------------------------
+-- 11. TABEL AGENDA KEGIATAN (agenda_kegiatan)
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `agenda_kegiatan`;
+CREATE TABLE `agenda_kegiatan` (
+  `id` VARCHAR(50) NOT NULL,
+  `judul` VARCHAR(255) NOT NULL,
+  `tanggal` VARCHAR(50) NOT NULL,
+  `waktu` VARCHAR(100) NOT NULL,
+  `lokasi` VARCHAR(255) NOT NULL,
+  `pelaksana` VARCHAR(150) NOT NULL,
+  `target_peserta` VARCHAR(150) DEFAULT NULL,
+  `status` VARCHAR(50) NOT NULL DEFAULT 'Mendatang',
+  `deskripsi` TEXT DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;
 -- ==============================================================================
 -- AKHIR DARI FILE SQL PUSKESMAS KEPULAUAN SERIBU SELATAN (HOSTINGER)

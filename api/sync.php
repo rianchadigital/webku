@@ -71,6 +71,18 @@ try {
         $faskesCount = (int)$pdo->query('SELECT COUNT(*) FROM fasilitas_pulau')->fetchColumn();
     }
 
+    // Cek jumlah Tautan Bermanfaat
+    $tautanCount = 0;
+    if (in_array('tautan_bermanfaat', $tables)) {
+        $tautanCount = (int)$pdo->query('SELECT COUNT(*) FROM tautan_bermanfaat')->fetchColumn();
+    }
+
+    // Cek jumlah Pengumuman
+    $pengumumanCount = 0;
+    if (in_array('pengumuman', $tables)) {
+        $pengumumanCount = (int)$pdo->query('SELECT COUNT(*) FROM pengumuman')->fetchColumn();
+    }
+
     jsonResponse('success', 'Sinkronisasi Database MySQL Hostinger BERHASIL!', [
         'database_name'     => DB_NAME,
         'mysql_version'     => $version,
@@ -78,6 +90,8 @@ try {
         'daftar_tabel'      => $tables,
         'total_sdm_nakes'   => $sdmCount,
         'total_faskes'      => $faskesCount,
+        'total_tautan'      => $tautanCount,
+        'total_pengumuman'  => $pengumumanCount,
         'queries_dijalankan'=> $queriesCount,
         'status_koneksi'    => 'TERHUBUNG',
         'waktu_sinkronisasi'=> date('Y-m-d H:i:s')
