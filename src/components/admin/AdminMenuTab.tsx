@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useData } from '../../context/DataContext';
 import { 
   Sliders, 
@@ -10,7 +10,14 @@ import {
   ExternalLink,
   CheckCircle2,
   HelpCircle,
-  Eye
+  Eye,
+  Image as ImageIcon,
+  Upload,
+  FolderCheck,
+  RefreshCw,
+  Info,
+  ShieldCheck,
+  FileCheck
 } from 'lucide-react';
 import { TabType } from '../../types';
 
@@ -27,6 +34,55 @@ export const AdminMenuTab: React.FC<Props> = ({ onSuccessToast }) => {
   );
   const [heroBadge, setHeroBadge] = useState('Puskesmas Ramah Bahari');
   const [heroTitle, setHeroTitle] = useState('Pusat Pelayanan Kesehatan Bahari Kepulauan Seribu Selatan');
+
+  // Slider image state
+  const [detectedImages, setDetectedImages] = useState<any[]>([]);
+  const [isRefreshingSlider, setIsRefreshingSlider] = useState(false);
+  const [uploadingSlot, setUploadingSlot] = useState<number | null>(null);
+
+  const fetchSliderStatus = () => {
+    setIsRefreshingSlider(true);
+    fetch('/api/slider.php')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.status === 'success' && Array.isArray(data.images)) {
+          setDetectedImages(data.images);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsRefreshingSlider(false));
+  };
+
+  useEffect(() => {
+    fetchSliderStatus();
+  }, []);
+
+  const handleUploadSliderSlot = async (slot: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('slot', slot.toString());
+
+    setUploadingSlot(slot);
+    try {
+      const res = await fetch('/api/slider.php', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (res.ok && data.status === 'success') {
+        onSuccessToast(`Spanduk slot ${slot} berhasil diperbarui di server hosting!`);
+        fetchSliderStatus();
+      } else {
+        alert(data.message || 'Gagal mengunggah gambar slider');
+      }
+    } catch (err) {
+      alert('Koneksi ke API slider gagal. Pastikan file diupload di server hosting.');
+    } finally {
+      setUploadingSlot(null);
+    }
+  };
 
   const mainMenuList: { tab: TabType; title: string; category: string; description: string }[] = [
     { tab: 'beranda', title: 'Beranda', category: 'Utama', description: 'Halaman muka, hero slider, layanan unggulan & statistik' },
@@ -131,7 +187,151 @@ export const AdminMenuTab: React.FC<Props> = ({ onSuccessToast }) => {
         </div>
       </div>
 
-      {/* 3. Daftar Struktur Navigasi Menu Publik */}
+      {/* 3. KONEKSI GAMBAR HEADER SLIDER DARI FOLDER ASSET/SLIDER */}
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="p-1.5 rounded-lg bg-teal-500/10 text-teal-700">
+                <ImageIcon className="w-4 h-4" />
+              </span>
+              <h4 className="font-bold text-slate-900 text-sm">
+                Koneksi Gambar Header Slider (Folder: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-teal-700 text-xs font-mono">asset/slider/</code>)
+              </h4>
+            </div>
+            <p className="text-slate-500 text-xs mt-1">
+              Website terhubung langsung ke folder <strong className="text-slate-700">asset/slider/</strong> di GitHub & Hostinger. Gambar yang diupload otomatis terdeteksi.
+            </p>
+          </div>
+
+          <button
+            onClick={fetchSliderStatus}
+            disabled={isRefreshingSlider}
+            className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-1.5 shrink-0 transition cursor-pointer"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-teal-600 ${isRefreshingSlider ? 'animate-spin' : ''}`} />
+            <span>Pindai Ulang Server</span>
+          </button>
+        </div>
+
+        {/* 4 Slot Header Slider */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {[
+            {
+              slot: 1,
+              title: 'Spanduk 01: Rawat Inap & UGD',
+              defaultName: 'banner-1.jpg',
+              altName: 'slider-1.jpg',
+              badge: 'Layanan Utama 24 Jam'
+            },
+            {
+              slot: 2,
+              title: 'Spanduk 02: Klaster ILP',
+              defaultName: 'banner-2.jpg',
+              altName: 'slider-2.jpg',
+              badge: 'Transformasi Primer'
+            },
+            {
+              slot: 3,
+              title: 'Spanduk 03: Rujukan Maritim',
+              defaultName: 'banner-3.jpg',
+              altName: 'slider-3.jpg',
+              badge: 'SISRUTE Kapal Ambulans'
+            },
+            {
+              slot: 4,
+              title: 'Spanduk 04: Wilayah 5 Pulau',
+              defaultName: 'banner-4.png',
+              altName: 'slider-4.png',
+              badge: 'Jejaring Pustu Pesisir'
+            }
+          ].map((item) => {
+            const previewUrl = `/asset/slider/${item.defaultName}`;
+            return (
+              <div 
+                key={item.slot} 
+                className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-2.5"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-teal-100 text-teal-800">
+                      SLOT {item.slot}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-medium">16:9 Landscape</span>
+                  </div>
+                  <h5 className="font-bold text-slate-800 text-xs">{item.title}</h5>
+                  <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                    {item.defaultName}
+                  </p>
+                </div>
+
+                {/* Pratinjau Gambar */}
+                <div className="relative aspect-video rounded-lg overflow-hidden border border-slate-200 bg-slate-900 group">
+                  <img
+                    src={previewUrl}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback ke banner default jika belum ada
+                      (e.target as HTMLImageElement).src = `/banners/${item.defaultName}`;
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center p-2 text-center">
+                    <span className="text-[10px] text-white font-semibold">
+                      Folder: /asset/slider/
+                    </span>
+                  </div>
+                </div>
+
+                {/* Upload Langsung dari Browser */}
+                <div className="pt-1">
+                  <label className="w-full py-1.5 px-2.5 rounded-lg bg-white border border-slate-200 hover:border-teal-400 text-slate-700 hover:text-teal-700 text-[11px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-2xs">
+                    <Upload className="w-3 h-3 text-teal-600" />
+                    <span>{uploadingSlot === item.slot ? 'Mengunggah...' : 'Ganti Gambar Ini'}</span>
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/webp"
+                      className="hidden"
+                      disabled={uploadingSlot !== null}
+                      onChange={(e) => handleUploadSliderSlot(item.slot, e)}
+                    />
+                  </label>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Info Panduan GitHub & Hostinger */}
+        <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-900 space-y-2 text-xs">
+          <div className="flex items-center gap-2 font-bold text-teal-950">
+            <ShieldCheck className="w-4 h-4 text-teal-600 shrink-0" />
+            <span>Petunjuk Sinkronisasi Gambar Header Slider:</span>
+          </div>
+          <ol className="list-decimal list-inside space-y-1 text-[11px] text-teal-800 leading-relaxed pl-1">
+            <li>
+              <strong>Lokasi Folder di GitHub:</strong> Pastikan gambar Anda disimpan di dalam folder <code className="bg-white/80 px-1 py-0.5 rounded font-mono font-bold">asset/slider/</code>.
+            </li>
+            <li>
+              <strong>Penamaan File:</strong> Beri nama file gambar Anda salah satu dari format berikut:
+              <span className="block mt-0.5 font-mono text-[10.5px] bg-white/70 p-1 rounded border border-teal-200">
+                • Slot 1: <code className="text-teal-900 font-bold">banner-1.jpg</code> atau <code className="text-teal-900 font-bold">slider-1.jpg</code><br/>
+                • Slot 2: <code className="text-teal-900 font-bold">banner-2.jpg</code> atau <code className="text-teal-900 font-bold">slider-2.jpg</code><br/>
+                • Slot 3: <code className="text-teal-900 font-bold">banner-3.jpg</code> atau <code className="text-teal-900 font-bold">slider-3.jpg</code><br/>
+                • Slot 4: <code className="text-teal-900 font-bold">banner-4.png</code> atau <code className="text-teal-900 font-bold">slider-4.jpg</code>
+              </span>
+            </li>
+            <li>
+              <strong>Format yang Didukung:</strong> File <code className="font-bold">.jpg</code>, <code className="font-bold">.png</code>, atau <code className="font-bold">.webp</code> dengan rasio landscape 16:9.
+            </li>
+            <li>
+              <strong>Sinkron ke Hostinger:</strong> Setelah file di-upload ke GitHub, buka Hostinger hPanel &rarr; Menu <strong>GIT</strong> &rarr; Klik <strong>Deploy</strong> (Tarik). Gambar akan langsung tampil di beranda tanpa blank!
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      {/* 4. Daftar Struktur Navigasi Menu Publik */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3">
         <div className="flex items-center justify-between">
           <label className="font-bold text-slate-900 text-sm flex items-center gap-2">

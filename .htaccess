@@ -17,7 +17,17 @@
   RewriteRule ^src/main\.(tsx|jsx|js|ts)$ /assets/app.js [L]
   RewriteRule ^src/index\.css$ /assets/app.css [L]
 
-  # 3. Routing Single Page Application (SPA)
+  # 3. KONEKSI FLEKSIBEL GAMBAR HEADER SLIDER DARI FOLDER ASSET / BANNERS
+  # Jika /banners/... tidak ditemukan, cari di /asset/slider/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^banners/(.*)$ /asset/slider/$1 [L]
+
+  # Jika /asset/... diminta dan ada di /public/asset/... atau sebaliknya
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{DOCUMENT_ROOT}/public/$1 -f
+  RewriteRule ^(asset/.*)$ /public/$1 [L]
+
+  # 4. Routing Single Page Application (SPA)
   # Jangan redirect file fisik yang ada (seperti file api/, assets/, banners/, .php, .js, .css)
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f

@@ -44,7 +44,88 @@ export const HeaderSlider: React.FC = () => {
   const [zoomModalOpen, setZoomModalOpen] = useState(false);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Dynamic detected images from /asset/slider/ or /api/slider.php
+  const [activeImageUrls, setActiveImageUrls] = useState<Record<number, string>>({});
+  const [candidateIndex, setCandidateIndex] = useState<Record<number, number>>({});
+
   const SLIDE_DURATION = 6500; // 6.5s per slide
+
+  // Menghasilkan daftar kandidat path gambar dari folder asset/slider/
+  const getSliderCandidates = (slideIndex: number): string[] => {
+    const num = slideIndex + 1;
+    return [
+      `/asset/slider/banner-${num}.jpg`,
+      `/asset/slider/banner-${num}.png`,
+      `/asset/slider/banner-${num}.jpeg`,
+      `/asset/slider/banner-${num}.webp`,
+      `/asset/slider/slider-${num}.jpg`,
+      `/asset/slider/slider-${num}.png`,
+      `/asset/slider/slider-${num}.webp`,
+      `/asset/slider/slide-${num}.jpg`,
+      `/asset/slider/slide-${num}.png`,
+      `/asset/slider/slider${num}.jpg`,
+      `/asset/slider/slider${num}.png`,
+      `/asset/slider/${num}.jpg`,
+      `/asset/slider/${num}.png`,
+      `/asset/slider/slider.png`,
+      `/asset/slider/slider.jpg`,
+      `/public/asset/slider/banner-${num}.jpg`,
+      `/assets/slider/banner-${num}.jpg`,
+      `/banners/banner-${num}.jpg`,
+      `/banners/banner-${num}.png`,
+      `/public/banners/banner-${num}.jpg`,
+      `/assets/slider.png`,
+      `/slider.png`
+    ];
+  };
+
+  // Cek apakah ada file yang diunggah di Hostinger melalui api/slider.php
+  useEffect(() => {
+    fetch('/api/slider.php')
+      .then((res) => {
+        if (!res.ok) throw new Error('API not available');
+        return res.json();
+      })
+      .then((data) => {
+        if (data && data.status === 'success' && Array.isArray(data.images) && data.images.length > 0) {
+          const newMap: Record<number, string> = {};
+          data.images.forEach((img: any, idx: number) => {
+            const match = img.filename.match(/(?:banner|slider|slide)?[_-]?(\d)/i);
+            if (match && match[1]) {
+              const slotIdx = parseInt(match[1], 10) - 1;
+              if (slotIdx >= 0 && slotIdx < 4 && !newMap[slotIdx]) {
+                newMap[slotIdx] = img.url;
+              }
+            } else if (idx < 4 && !newMap[idx]) {
+              newMap[idx] = img.url;
+            }
+          });
+          if (Object.keys(newMap).length > 0) {
+            setActiveImageUrls((prev) => ({ ...prev, ...newMap }));
+          }
+        }
+      })
+      .catch(() => {
+        // Lingkungan Vite dev tanpa PHP tetap bekerja normal dengan daftar kandidat
+      });
+  }, []);
+
+  const getImageForSlide = (idx: number): string => {
+    if (activeImageUrls[idx]) {
+      return activeImageUrls[idx];
+    }
+    const candidates = getSliderCandidates(idx);
+    const currIdx = candidateIndex[idx] || 0;
+    return candidates[currIdx] || candidates[0];
+  };
+
+  const handleImageError = (idx: number) => {
+    const candidates = getSliderCandidates(idx);
+    const currIdx = candidateIndex[idx] || 0;
+    if (currIdx < candidates.length - 1) {
+      setCandidateIndex((prev) => ({ ...prev, [idx]: currIdx + 1 }));
+    }
+  };
 
   const bannerSlides: BannerSlide[] = [
     {
@@ -202,10 +283,11 @@ export const HeaderSlider: React.FC = () => {
                 }`}
               >
                 <img
-                  src={slide.image}
+                  src={getImageForSlide(index)}
                   alt={`${slide.title} ${slide.highlight} - Spanduk Informasi Puskesmas Kepulauan Seribu Selatan`}
                   className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.01]"
                   loading={index === 0 ? 'eager' : 'lazy'}
+                  onError={() => handleImageError(index)}
                 />
 
                 {/* Subtle gradient overlay at bottom & sides for editorial readability */}
@@ -337,9 +419,10 @@ export const HeaderSlider: React.FC = () => {
                 {/* Mini Image Preview */}
                 <div className="relative w-12 sm:w-16 h-8 sm:h-10 rounded-lg overflow-hidden shrink-0 border border-white/10 bg-slate-950">
                   <img
-                    src={slide.image}
+                    src={getImageForSlide(idx)}
                     alt={slide.title}
                     className="w-full h-full object-cover"
+                    onError={() => handleImageError(idx)}
                   />
                   {idx === currentSlide && (
                     <div className="absolute inset-0 bg-sky-500/20 ring-1 ring-inset ring-sky-400" />
@@ -399,9 +482,10 @@ export const HeaderSlider: React.FC = () => {
 
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-black">
               <img
-                src={active.image}
+                src={getImageForSlide(currentSlide)}
                 alt={`${active.title} ${active.highlight}`}
                 className="w-full h-auto max-h-[75vh] object-contain mx-auto"
+                onError={() => handleImageError(currentSlide)}
               />
             </div>
 
